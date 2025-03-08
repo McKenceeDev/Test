@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Redireccionando a GM Connect</title>
+    <meta http-equiv="refresh" content="0; url=GMConect.html">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .loading {
+            margin: 20px auto;
+            width: 70px;
+            text-align: center;
+        }
+        .loading > div {
+            width: 18px;
+            height: 18px;
+            background-color: #0170CE;
+            border-radius: 100%;
+            display: inline-block;
+            animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+            margin: 0 5px;
+        }
+        .loading .bounce1 {
+            animation-delay: -0.32s;
+        }
+        .loading .bounce2 {
+            animation-delay: -0.16s;
+        }
+        @keyframes sk-bouncedelay {
+            0%, 80%, 100% { 
+                transform: scale(0);
+            } 40% { 
+                transform: scale(1.0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Redireccionando a GM Connect...</h2>
+    <div class="loading">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
+    <p>Si no eres redirigido automáticamente, <a href="GMConect.html">haz clic aquí</a>.</p>
+    <script>
+        window.location.href = "GMConect.html";
+    </script>
+</body>
+</html>
