@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GM Connect - Plataforma Digital</title>
+    <style>
+        /* Reset básico y estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header y navegación */
+        header {
+            background-color: #0170CE;
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 24px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .login-btn {
+            background-color: white;
+            color: #0170CE;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* Tabs y navegación principal */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .tab-trigger {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background-color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tab-trigger.active {
+            background-color: #f0f0f0;
+            color: #0170CE;
+            border-bottom: 3px solid #0170CE;
+        }
+        
+        .tab-trigger:hover:not(.active) {
+            background-color: #f9f9f9;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Tarjetas y componentes */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-body {
+            padding: 15px;
+        }
+        
+        .card-small {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        /* Grid layouts */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        /* Elementos de formulario */
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            background-color: #0170CE;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #0155a8;
+        }
+        
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .btn-accent {
+            background-color: #E31937;
+        }
+        
+        .btn-accent:hover {
+            background-color: #c01530;
+        }
+        
+        /* Barra de progreso */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #eee;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #0170CE;
+            transition: width 0.3s;
+        }
+        
+        /* Componentes específicos */
+        .vehicle-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .vehicle-img {
+            width: 100%;
+            height: 180px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #999;
+        }
+        
+        .vehicle-info {
+            padding: 15px;
+        }
+        
+        .price {
+            color: #E31937;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        /* Sección de Flota */
+        .fleet-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #0170CE;
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            height: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chart-placeholder {
+            flex: 1;
+            background-color: #f9f9f9;
+            border: 1px dashed #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #999;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-trigger {
+                padding: 10px;
+            }
+            
+            .fleet-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .fleet-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Selector de perfiles para demo */
+        .profile-selector {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #E31937;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Estilos para modales */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 24px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Profile Selector -->
+    <div class="profile-selector">
+        <label for="profile-select">Vista de:</label>
+        <select id="profile-select" onchange="changeProfile()">
+            <option value="cliente">Cliente Particular</option>
+            <option value="flota">Gestor de Flota</option>
+            <option value="concesionario">Concesionario</option>
+        </select>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span>GM Connect</span>
+            </div>
+            <div class="user-menu">
+                <span id="user-name">Invitado</span>
+                <button class="login-btn" onclick="toggleLogin()">Iniciar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Navegación por pestañas -->
+        <div class="tabs">
+            <button class="tab-trigger active" data-tab="compra" onclick="switchTab('compra')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 17h2l.64-2.54c.24-.959.24-1.962 0-2.92l-1.07-4.27A2 2 0 0 0 18.65 6H5.35a2 2 0 0 0-1.92 1.27L2.36 11.54c-.24.96-.24 1.96 0 2.92L3 17h2M14 5h-4M5 9l2 8h10l2-8"></path>
+                </svg>
+                Compra de Vehículos
+            </button>
+            <button class="tab-trigger" data-tab="postventa" onclick="switchTab('postventa')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2l6 6-14 14-6-6L14 2zm-8.5 12.5l7-7"></path>
+                </svg>
+                Servicios Postventa
+            </button>
+            <button class="tab-trigger" data-tab="concesionario" onclick="switchTab('concesionario')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Panel de Gestión
+            </button>
+            <button class="tab-trigger flota-tab" data-tab="flota" onclick="switchTab('flota')" style="display: none;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 3h5v5M8 3H3v5m18 8v5h-5m0-18L3 21M21 3L3 21"></path>
+                </svg>
+                Gestión de Flota
+                <span class="notification">2</span>
+            </button>
+        </div>
+
+        <!-- Contenido de las pestañas -->
+        
+        <!-- Tab: Compra de Vehículos -->
+        <div id="compra" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Descubre nuestros vehículos</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" class="input" placeholder="Buscar por modelo, tipo o características..." id="search-vehicle">
+                    </div>
+                    
+                    <div class="grid" id="vehicles-grid">
+                        <!-- Vehículos se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Servicios Postventa -->
+        <div id="postventa" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Seguimiento de Servicio</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" class="input" placeholder="Ingrese la placa de su vehículo" id="search-plate">
+                    </div>
+                    
+                    <div id="service-results">
+                        <!-- Resultados de servicio se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Agendar Mantenimiento</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label class="input-label">Seleccione su vehículo</label>
+                        <select class="input">
+                            <option>Chevrolet Onix (ABC123)</option>
+                            <option>Chevrolet Tracker (XYZ789)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Tipo de servicio</label>
+                        <select class="input">
+                            <option>Mantenimiento preventivo</option>
+                            <option>Cambio de aceite</option>
+                            <option>Revisión de frenos</option>
+                            <option>Diagnóstico general</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Fecha deseada</label>
+                        <input type="date" class="input">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Concesionario</label>
+                        <select class="input">
+                            <option>GM Bogotá Centro</option>
+                            <option>GM Bogotá Norte</option>
+                            <option>GM Medellín</option>
+                            <option>GM Cali</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn">Agendar Cita</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Panel de Concesionario -->
+        <div id="concesionario" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Panel de Concesionario</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" class="input" placeholder="Buscar por modelo..." id="search-inventory">
+                    </div>
+                    
+                    <h3 style="margin: 15px 0;">Inventario Disponible</h3>
+                    <div class="grid" id="inventory-grid">
+                        <!-- Inventario se cargará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Clientes en Servicio</h2>
+                </div>
+                <div class="card-body">
+                    <div id="service-clients">
+                        <!-- Clientes en servicio se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Gestión de Flota -->
+        <div id="flota" class="tab-content">
+            <h2>Dashboard de Flota Empresarial</h2>
+            
+            <div class="fleet-stats">
+                <div class="stat-card">
+                    <div>Vehículos Activos</div>
+                    <div class="stat-value">42</div>
+                </div>
+                <div class="stat-card">
+                    <div>Alertas de Mantenimiento</div>
+                    <div class="stat-value" style="color:#E31937">7</div>
+                </div>
+                <div class="stat-card">
+                    <div>Km Mensuales</div>
+                    <div class="stat-value">24,356</div>
+                </div>
+                <div class="stat-card">
+                    <div>Consumo Promedio</div>
+                    <div class="stat-value">9.2L</div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3>Costos de Mantenimiento por Modelo</h3>
+                <div class="chart-placeholder">
+                    [Gráfica de Costos]
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Alertas Recientes</h3>
+                </div>
+                <div class="card-body">
+                    <div class="card-small">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong>Tracker #104</strong>
+                            <span style="color:#E31937">Mantenimiento Urgente</span>
+                        </div>
+                        <p>5,000 km recorridos desde último servicio</p>
+                        <button class="btn" style="margin-top:10px">Programar Servicio</button>
+                    </div>
+                    <div class="card-small">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong>Onix #087</strong>
+                            <span style="color:#E31937">Batería Baja</span>
+                        </div>
+                        <p>Última carga: 27%</p>
+                        <button class="btn" style="margin-top:10px">Ver Detalles</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Login -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Iniciar Sesión</h2>
+                <span class="close-btn" onclick="toggleLogin()">&times;</span>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Correo electrónico</label>
+                <input type="email" class="input" placeholder="correo@ejemplo.com">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Contraseña</label>
+                <input type="password" class="input" placeholder="********">
+            </div>
+            <button class="btn" style="width:100%; margin-top:15px;">Ingresar</button>
+            <p style="text-align:center; margin-top:15px;">
+                <a href="#" style="color:#0170CE;">¿Olvidó su contraseña?</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo
+        const vehicles = [
+            { name: "Chevrolet Onix", price: "$80,000,000 COP", image: "onix.jpg", model: "Onix" },
+            { name: "Chevrolet Tracker", price: "$100,000,000 COP", image: "tracker.jpg", model: "Tracker" },
+            { name: "Chevrolet Equinox", price: "$120,000,000 COP", image: "equinox.jpg", model: "Equinox" },
+            { name: "Chevrolet Tahoe", price: "$200,000,000 COP", image: "tahoe.jpg", model: "Tahoe" }
+        ];
+        
+        const inventory = [
+            { model: "Onix", count: 15, colors: ["Rojo", "Blanco"], location: "Bogotá" },
+            { model: "Tracker", count: 10, colors: ["Azul", "Negro"], location: "Medellín" },
+            { model: "Equinox", count: 8, colors: ["Negro", "Gris"], location: "Cali" },
+            { model: "Tahoe", count: 5, colors: ["Blanco", "Plateado"], location: "Barranquilla" }
+        ];
+        
+        const services = [
+            { plate: "ABC123", model: "Onix", progress: 70, completed: ["Cambio de aceite"], pending: "Revisión de frenos", estimatedTime: "2 horas" },
+            { plate: "XYZ789", model: "Tracker", progress: 40, completed: ["Diagnóstico general"], pending: "Cambio de pastillas de freno", estimatedTime: "3 horas" }
+        ];
+        
+        // Funciones
+        function switchTab(tabId) {
+            // Ocultar todos los contenidos
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Desactivar todos los triggers
+            document.querySelectorAll('.tab-trigger').forEach(trigger => {
+                trigger.classList.remove('active');
+            });
+            
+            // Activar el contenido seleccionado
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activar el trigger seleccionado
+            document.querySelector(`.tab-trigger[data-tab="${tabId}"]`).classList.add('active');
+        }
+        
+        function toggleLogin() {
+            const modal = document.getElementById('login-modal');
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'flex';
+            }
+        }
+        
+        function changeProfile() {
+            const profile = document.getElementById('profile-select').value;
+            const flotaTab = document.querySelector('.flota-tab');
+            
+            // Cambiar visibilidad de pestañas según perfil
+            if (profile === 'flota') {
+                flotaTab.style.display = 'flex';
+                document.getElementById('user-name').textContent = 'Empresa XYZ';
+            } else {
+                flotaTab.style.display = 'none';
+                
+                if (profile === 'cliente') {
+                    document.getElementById('user-name').textContent = 'Juan Pérez';
+                } else if (profile === 'concesionario') {
+                    document.getElementById('user-name').textContent = 'Concesionario Bogotá';
+                }
+            }
+            
+            // Cambiar a pestaña relevante para el perfil
+            if (profile === 'cliente') {
+                switchTab('compra');
+            } else if (profile === 'flota') {
+                switchTab('flota');
+            } else if (profile === 'concesionario') {
+                switchTab('concesionario');
+            }
+        }
+        
+        // Cargar datos en la interfaz
+        function loadVehicles() {
+            const vehiclesGrid = document.getElementById('vehicles-grid');
+            vehiclesGrid.innerHTML = '';
+            
+            vehicles.forEach(vehicle => {
+                const vehicleCard = document.createElement('div');
+                vehicleCard.className = 'vehicle-card';
+                vehicleCard.innerHTML = `
+                    <div class="vehicle-img">[Imagen ${vehicle.model}]</div>
+                    <div class="vehicle-info">
+                        <h3>${vehicle.name}</h3>
+                        <p class="price">${vehicle.price}</p>
+                        <button class="btn" style="width:100%; margin-top:10px;">Ver Detalles</button>
+                    </div>
+                `;
+                vehiclesGrid.appendChild(vehicleCard);
+            });
+        }
+        
+        function loadInventory() {
+            const inventoryGrid = document.getElementById('inventory-grid');
+            inventoryGrid.innerHTML = '';
+            
+            inventory.forEach(item => {
+                const inventoryCard = document.createElement('div');
+                inventoryCard.className = 'card-small';
+                inventoryCard.innerHTML = `
+                    <h3>${item.model}</h3>
+                    <p>Cantidad Disponible: ${item.count}</p>
+                    <p>Colores Disponibles: ${item.colors.join(', ')}</p>
+                    <p>Ubicación: ${item.location}</p>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button class="btn">Gestionar</button>
+                        <button class="btn btn-secondary">Ver Detalles</button>
+                    </div>
+                `;
+                inventoryGrid.appendChild(inventoryCard);
+            });
+        }
+        
+        function loadServices() {
+            const serviceResults = document.getElementById('service-results');
+            serviceResults.innerHTML = '';
+            
+            const searchPlate = document.getElementById('search-plate').value.toUpperCase();
+            
+            const filteredServices = services.filter(service => 
+                service.plate.toUpperCase().includes(searchPlate)
+            );
+            
+            if (filteredServices.length === 0 && searchPlate) {
+                serviceResults.innerHTML = '<p>No se encontraron vehículos con esa placa.</p>';
+                return;
+            }
+            
+            filteredServices.forEach(service => {
+                const serviceCard = document.createElement('div');
+                serviceCard.className = 'card-small';
+                serviceCard.innerHTML = `
+                    <h3>Vehículo: ${service.model} (Placa: ${service.plate})</h3>
+                    <p>Procesos Completados: ${service.completed.join(', ')}</p>
+                    <p>Proceso Pendiente: ${service.pending}</p>
+                    <p>Tiempo Estimado de Entrega: ${service.estimatedTime}</p>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: ${service.progress}%"></div>
+                    </div>
+                    <p style="text-align:right;">${service.progress}% completado</p>
+                `;
+                serviceResults.appendChild(serviceCard);
+            });
+        }
+        
+        function loadServiceClients() {
+            const serviceClients = document.getElementById('service-clients');
+            serviceClients.innerHTML = '';
+            
+            services.forEach(service => {
+                const clientCard = document.createElement('div');
+                clientCard.className = 'card-small';
+                clientCard.innerHTML = `
+                    <div style="display:flex; justify-content:space-between;">
+                        <h3>${service.model} (${service.plate})</h3>
+                        <span>${service.progress}% completado</span>
+                    </div>
+                    <p>Pendiente: ${service.pending}</p>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: ${service.progress}%"></div>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button class="btn">Actualizar Estado</button>
+                        <button class="btn btn-secondary">Contactar Cliente</button>
+                        </div>
+                `;
+                serviceClients.appendChild(clientCard);
+            });
+        }
+        
+        // Event Listeners
+        document.getElementById('search-plate').addEventListener('input', loadServices);
+        document.getElementById('search-inventory').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const inventoryItems = document.querySelectorAll('#inventory-grid .card-small');
+            
+            inventoryItems.forEach(item => {
+                const modelText = item.querySelector('h3').textContent.toLowerCase();
+                if (modelText.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        document.getElementById('search-vehicle').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const vehicleCards = document.querySelectorAll('#vehicles-grid .vehicle-card');
+            
+            vehicleCards.forEach(card => {
+                const nameText = card.querySelector('h3').textContent.toLowerCase();
+                if (nameText.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVehicles();
+            loadInventory();
+            loadServices();
+            loadServiceClients();
+            
+            // Iniciar con perfil de cliente
+            changeProfile();
+        });
+    </script>
+</body>
+</html>
