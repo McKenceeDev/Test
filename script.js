@@ -82,11 +82,29 @@ function toggleLogin() {
     }
 }
 
+// Cerrar modal de detalles si existe
+function closeVehicleDetailsModal() {
+    const existingModal = document.getElementById('vehicle-details-modal');
+    if (existingModal) {
+        document.body.removeChild(existingModal);
+    }
+}
+
 // Modal para mostrar detalles del vehículo
 function showVehicleDetails(model) {
+    // Cerrar modal existente si hay uno
+    closeVehicleDetailsModal();
+    
+    console.log("Mostrando detalles para:", model); // Depuración
+    
     // Encontrar datos del vehículo
     const vehicleData = vehicles.find(v => v.model === model);
     const inventoryData = inventory.find(i => i.model === model);
+    
+    if (!vehicleData) {
+        console.error("No se encontraron datos para el modelo:", model);
+        return;
+    }
     
     // Crear modal de detalles
     const detailsModal = document.createElement('div');
@@ -98,7 +116,7 @@ function showVehicleDetails(model) {
     detailsModal.innerHTML = `
         <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
-                <h2>Detalles de ${vehicleData ? vehicleData.name : model}</h2>
+                <h2>Detalles de ${vehicleData.name}</h2>
                 <span class="close-btn">&times;</span>
             </div>
             <div style="display: flex; margin-bottom: 20px;">
@@ -108,7 +126,7 @@ function showVehicleDetails(model) {
                 <div style="flex: 1; padding-left: 20px;">
                     <h3>Información General</h3>
                     <p><strong>Modelo:</strong> ${model}</p>
-                    ${vehicleData ? `<p><strong>Precio:</strong> ${vehicleData.price}</p>` : ''}
+                    <p><strong>Precio:</strong> ${vehicleData.price}</p>
                     ${inventoryData ? `
                         <p><strong>Disponibilidad:</strong> ${inventoryData.count} unidades</p>
                         <p><strong>Colores:</strong> ${inventoryData.colors.join(', ')}</p>
@@ -285,27 +303,25 @@ function loadVehicles() {
         const vehicleCard = document.createElement('div');
         vehicleCard.className = 'vehicle-card';
         vehicleCard.innerHTML = `
-            <div class="vehicle-img" style="background-image: url('${vehicleImages[vehicle.model]}')"></div>
+            <div class="vehicle-img" style="background-image: url('${vehicleImages[vehicle.model]}'); cursor: pointer;"></div>
             <div class="vehicle-info">
                 <h3>${vehicle.name}</h3>
                 <p class="price">${vehicle.price}</p>
-                <button class="btn" style="width:100%; margin-top:10px;">Ver Detalles</button>
+                <button class="btn details-btn" style="width:100%; margin-top:10px;">Ver Detalles</button>
             </div>
         `;
         
+        vehiclesGrid.appendChild(vehicleCard);
+        
         // Añadir evento para mostrar detalles al hacer clic en la imagen
-        const vehicleImg = vehicleCard.querySelector('.vehicle-img');
-        vehicleImg.addEventListener('click', function() {
+        vehicleCard.querySelector('.vehicle-img').onclick = function() {
             showVehicleDetails(vehicle.model);
-        });
+        };
         
         // Añadir evento para mostrar detalles al hacer clic en el botón
-        const detailsBtn = vehicleCard.querySelector('.btn');
-        detailsBtn.addEventListener('click', function() {
+        vehicleCard.querySelector('.details-btn').onclick = function() {
             showVehicleDetails(vehicle.model);
-        });
-        
-        vehiclesGrid.appendChild(vehicleCard);
+        };
     });
 }
 
@@ -317,9 +333,11 @@ function loadInventory() {
     inventory.forEach(item => {
         const inventoryCard = document.createElement('div');
         inventoryCard.className = 'card-small';
+        
+        // HTML para la tarjeta de inventario
         inventoryCard.innerHTML = `
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                <div style="width:50px; height:50px; background-image:url('${vehicleImages[item.model]}'); background-size:cover; background-position:center; border-radius:4px;"></div>
+                <div class="vehicle-thumb" style="width:50px; height:50px; background-image:url('${vehicleImages[item.model]}'); background-size:cover; background-position:center; border-radius:4px; cursor:pointer;"></div>
                 <h3>${item.model}</h3>
             </div>
             <p>Cantidad Disponible: ${item.count}</p>
@@ -331,13 +349,17 @@ function loadInventory() {
             </div>
         `;
         
-        // Agregar evento al botón de detalles
-        const detailsBtn = inventoryCard.querySelector('.details-btn');
-        detailsBtn.addEventListener('click', function() {
-            showVehicleDetails(item.model);
-        });
-        
         inventoryGrid.appendChild(inventoryCard);
+        
+        // Agregar evento al botón de detalles
+        inventoryCard.querySelector('.details-btn').onclick = function() {
+            showVehicleDetails(item.model);
+        };
+        
+        // Agregar evento a la miniatura
+        inventoryCard.querySelector('.vehicle-thumb').onclick = function() {
+            showVehicleDetails(item.model);
+        };
     });
 }
 
@@ -360,9 +382,11 @@ function loadServices() {
     filteredServices.forEach(service => {
         const serviceCard = document.createElement('div');
         serviceCard.className = 'card-small';
+        
+        // HTML para la tarjeta de servicio
         serviceCard.innerHTML = `
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                <div style="width:50px; height:50px; background-image:url('${vehicleImages[service.model]}'); background-size:cover; background-position:center; border-radius:4px;"></div>
+                <div class="vehicle-thumb" style="width:50px; height:50px; background-image:url('${vehicleImages[service.model]}'); background-size:cover; background-position:center; border-radius:4px; cursor:pointer;"></div>
                 <h3>Placa: ${service.plate} (${service.model})</h3>
             </div>
             <p>Procesos Completados: ${service.completed.join(', ')}</p>
@@ -375,14 +399,12 @@ function loadServices() {
             <button class="btn" style="margin-top:10px">Actualizar</button>
         `;
         
-        // Hacer que la miniatura sea clicable
-        const vehicleThumb = serviceCard.querySelector('div[style*="background-image"]');
-        vehicleThumb.style.cursor = 'pointer';
-        vehicleThumb.addEventListener('click', function() {
-            showVehicleDetails(service.model);
-        });
-        
         serviceResults.appendChild(serviceCard);
+        
+        // Hacer que la miniatura sea clicable
+        serviceCard.querySelector('.vehicle-thumb').onclick = function() {
+            showVehicleDetails(service.model);
+        };
     });
 }
 
@@ -394,10 +416,12 @@ function loadServiceClients() {
     services.forEach(service => {
         const clientCard = document.createElement('div');
         clientCard.className = 'card-small';
+        
+        // HTML para la tarjeta de cliente en servicio
         clientCard.innerHTML = `
             <div style="display:flex; justify-content:space-between;">
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <div style="width:40px; height:40px; background-image:url('${vehicleImages[service.model]}'); background-size:cover; background-position:center; border-radius:4px;"></div>
+                    <div class="vehicle-thumb" style="width:40px; height:40px; background-image:url('${vehicleImages[service.model]}'); background-size:cover; background-position:center; border-radius:4px; cursor:pointer;"></div>
                     <h3>${service.model} (${service.plate})</h3>
                 </div>
                 <span>${service.progress}% completado</span>
@@ -412,13 +436,11 @@ function loadServiceClients() {
             </div>
         `;
         
-        // Hacer que la miniatura sea clicable
-        const vehicleThumb = clientCard.querySelector('div[style*="background-image"]');
-        vehicleThumb.style.cursor = 'pointer';
-        vehicleThumb.addEventListener('click', function() {
-            showVehicleDetails(service.model);
-        });
-        
         serviceClients.appendChild(clientCard);
+        
+        // Hacer que la miniatura sea clicable
+        clientCard.querySelector('.vehicle-thumb').onclick = function() {
+            showVehicleDetails(service.model);
+        };
     });
 }
