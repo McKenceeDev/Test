@@ -2,13 +2,257 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=GMconectII.html">
-    <title>Redireccionando a GM Connect</title>
-    <script>
-        window.location.href = "GMconectII.html";
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GM Connect - Plataforma Digital</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <p>Si no eres redirigido automáticamente, <a href="GMconectII.html">haz clic aquí</a> para ir al prototipo de GM Connect.</p>
+    <!-- Demo Profile Selector -->
+    <div class="profile-selector">
+        <label for="profile-select">Vista de:</label>
+        <select id="profile-select">
+            <option value="cliente">Cliente Particular</option>
+            <option value="flota">Gestor de Flota</option>
+            <option value="concesionario">Concesionario</option>
+        </select>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <!-- Logo GM en Base64 (versión simplificada) -->
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMzAiPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik01MCwxNWMwLDguMy02LjcsMTUtMTUsMTVzLTE1LTYuNy0xNS0xNVM2MS45LDAsMTUsMGg3MGMwLDguMy02LjcsMTUtMTUsMTVjLTIuOCwwLTUuNC0wLjgtNy42LTIuMSI+PC9wYXRoPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik00OS44LDE1YzAsOC4zLTE1LDE1LTE1LDE1cy0xNS02LjctMTUtMTVzNi43LTE1LDE1LTE1UzQ5LjgsNi43LDQ5LjgsMTUiPjwvcGF0aD48L3N2Zz4=" class="logo-img" alt="GM Logo">
+                <span>GM Connect</span>
+            </div>
+            <div class="user-menu">
+                <span id="user-name">Invitado</span>
+                <button class="login-btn" onclick="toggleLogin()">Iniciar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Navegación por pestañas -->
+        <div class="tabs">
+            <button class="tab-trigger active" data-tab="compra">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 17h2l.64-2.54c.24-.959.24-1.962 0-2.92l-1.07-4.27A2 2 0 0 0 18.65 6H5.35a2 2 0 0 0-1.92 1.27L2.36 11.54c-.24.96-.24 1.96 0 2.92L3 17h2M14 5h-4M5 9l2 8h10l2-8"></path>
+                </svg>
+                Compra de Vehículos
+            </button>
+            <button class="tab-trigger" data-tab="postventa">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2l6 6-14 14-6-6L14 2zm-8.5 12.5l7-7"></path>
+                </svg>
+                Servicios Postventa
+            </button>
+            <button class="tab-trigger" data-tab="concesionario">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Panel de Gestión
+            </button>
+            <button class="tab-trigger flota-tab" data-tab="flota" style="display: none;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 3h5v5M8 3H3v5m18 8v5h-5m0-18L3 21M21 3L3 21"></path>
+                </svg>
+                Gestión de Flota
+                <span class="notification">2</span>
+            </button>
+        </div>
+
+        <!-- Contenido de las pestañas -->
+        
+        <!-- Tab: Compra de Vehículos -->
+        <div id="compra" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Descubre nuestros vehículos</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" class="input" placeholder="Buscar por modelo, tipo o características..." id="search-vehicle">
+                    </div>
+                    
+                    <div class="grid" id="vehicles-grid">
+                        <!-- Vehículos se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Servicios Postventa -->
+        <div id="postventa" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Seguimiento de Servicio</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" class="input" placeholder="Ingrese la placa de su vehículo" id="search-plate">
+                    </div>
+                    
+                    <div id="service-results">
+                        <!-- Resultados de servicio se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Agendar Mantenimiento</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label class="input-label">Seleccione su vehículo</label>
+                        <select class="input">
+                            <option>Chevrolet Onix (ABC123)</option>
+                            <option>Chevrolet Tracker (XYZ789)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Tipo de servicio</label>
+                        <select class="input">
+                            <option>Mantenimiento preventivo</option>
+                            <option>Cambio de aceite</option>
+                            <option>Revisión de frenos</option>
+                            <option>Diagnóstico general</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Fecha deseada</label>
+                        <input type="date" class="input">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Concesionario</label>
+                        <select class="input">
+                            <option>GM Bogotá Centro</option>
+                            <option>GM Bogotá Norte</option>
+                            <option>GM Medellín</option>
+                            <option>GM Cali</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn">Agendar Cita</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Panel de Concesionario -->
+        <div id="concesionario" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Panel de Concesionario</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" class="input" placeholder="Buscar por modelo..." id="search-inventory">
+                    </div>
+                    
+                    <h3 style="margin: 15px 0;">Inventario Disponible</h3>
+                    <div class="grid" id="inventory-grid">
+                        <!-- Inventario se cargará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Clientes en Servicio</h2>
+                </div>
+                <div class="card-body">
+                    <div id="service-clients">
+                        <!-- Clientes en servicio se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Gestión de Flota -->
+        <div id="flota" class="tab-content">
+            <h2>Dashboard de Flota Empresarial</h2>
+            
+            <div class="fleet-stats">
+                <div class="stat-card">
+                    <div>Vehículos Activos</div>
+                    <div class="stat-value">42</div>
+                </div>
+                <div class="stat-card">
+                    <div>Alertas de Mantenimiento</div>
+                    <div class="stat-value" style="color:#E31937">7</div>
+                </div>
+                <div class="stat-card">
+                    <div>Km Mensuales</div>
+                    <div class="stat-value">24,356</div>
+                </div>
+                <div class="stat-card">
+                    <div>Consumo Promedio</div>
+                    <div class="stat-value">9.2L</div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3>Costos de Mantenimiento por Modelo</h3>
+                <div class="chart-placeholder">
+                    [Gráfica de Costos]
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Alertas Recientes</h3>
+                </div>
+                <div class="card-body">
+                    <div class="card-small">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong>Tracker #104</strong>
+                            <span style="color:#E31937">Mantenimiento Urgente</span>
+                        </div>
+                        <p>5,000 km recorridos desde último servicio</p>
+                        <button class="btn" style="margin-top:10px">Programar Servicio</button>
+                    </div>
+                    <div class="card-small">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong>Onix #087</strong>
+                            <span style="color:#E31937">Batería Baja</span>
+                        </div>
+                        <p>Última carga: 27%</p>
+                        <button class="btn" style="margin-top:10px">Ver Detalles</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Login -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Iniciar Sesión</h2>
+                <span class="close-btn">&times;</span>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Correo electrónico</label>
+                <input type="email" class="input" placeholder="correo@ejemplo.com">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Contraseña</label>
+                <input type="password" class="input" placeholder="********">
+            </div>
+            <button class="btn" style="width:100%; margin-top:15px;">Ingresar</button>
+            <p style="text-align:center; margin-top:15px;">
+                <a href="#" style="color:#0170CE;">¿Olvidó su contraseña?</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
