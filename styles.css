@@ -384,4 +384,58 @@ header {
     .fleet-stats {
         grid-template-columns: 1fr;
     }
+    /* Mejoras para navegación basada en roles */
+.tab-trigger.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Estilos para miniaturas clicables */
+[style*="background-image"] {
+    transition: all 0.2s ease;
+}
+
+[style*="background-image"]:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Mejoras para los detalles de vehículos */
+#vehicle-details-modal .modal-content {
+    max-width: 700px;
+}
+
+#vehicle-details-modal h3 {
+    margin-top: 0;
+    color: #0170CE;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+/* Estilos para tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
 }
