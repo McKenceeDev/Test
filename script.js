@@ -29,7 +29,10 @@ function initTabs() {
     // Asignar event listeners a las pestañas
     document.querySelectorAll('.tab-trigger').forEach(tab => {
         tab.addEventListener('click', function() {
-            switchTab(this.getAttribute('data-tab'));
+            // Solo permitir cambio si la pestaña no está deshabilitada
+            if (!this.classList.contains('disabled')) {
+                switchTab(this.getAttribute('data-tab'));
+            }
         });
     });
 }
@@ -79,6 +82,93 @@ function toggleLogin() {
     }
 }
 
+// Modal para mostrar detalles del vehículo
+function showVehicleDetails(model) {
+    // Encontrar datos del vehículo
+    const vehicleData = vehicles.find(v => v.model === model);
+    const inventoryData = inventory.find(i => i.model === model);
+    
+    // Crear modal de detalles
+    const detailsModal = document.createElement('div');
+    detailsModal.className = 'modal';
+    detailsModal.style.display = 'flex';
+    detailsModal.id = 'vehicle-details-modal';
+    
+    // HTML del modal
+    detailsModal.innerHTML = `
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>Detalles de ${vehicleData ? vehicleData.name : model}</h2>
+                <span class="close-btn">&times;</span>
+            </div>
+            <div style="display: flex; margin-bottom: 20px;">
+                <div style="flex: 1;">
+                    <div style="width: 100%; height: 200px; background-image: url('${vehicleImages[model]}'); background-size: cover; background-position: center; border-radius: 8px;"></div>
+                </div>
+                <div style="flex: 1; padding-left: 20px;">
+                    <h3>Información General</h3>
+                    <p><strong>Modelo:</strong> ${model}</p>
+                    ${vehicleData ? `<p><strong>Precio:</strong> ${vehicleData.price}</p>` : ''}
+                    ${inventoryData ? `
+                        <p><strong>Disponibilidad:</strong> ${inventoryData.count} unidades</p>
+                        <p><strong>Colores:</strong> ${inventoryData.colors.join(', ')}</p>
+                        <p><strong>Ubicación:</strong> ${inventoryData.location}</p>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <h3>Especificaciones Técnicas</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <tr style="background-color: #f0f0f0;">
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Característica</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Detalle</th>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">Motor</td>
+                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">1.6L Turbo (según modelo)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">Potencia</td>
+                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">130 HP @ 5500 rpm</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">Transmisión</td>
+                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">Automática de 6 velocidades</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">Rendimiento</td>
+                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">16.8 km/l (combinado)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">Garantía</td>
+                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">3 años o 100,000 km</td>
+                </tr>
+            </table>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn">Solicitar Cotización</button>
+                ${inventoryData && inventoryData.count > 0 ? `<button class="btn btn-accent" style="margin-left: 10px;">Agendar Test Drive</button>` : ''}
+            </div>
+        </div>
+    `;
+    
+    // Agregar al body
+    document.body.appendChild(detailsModal);
+    
+    // Cerrar el modal
+    const closeButton = detailsModal.querySelector('.close-btn');
+    closeButton.addEventListener('click', function() {
+        document.body.removeChild(detailsModal);
+    });
+    
+    // Cerrar al hacer clic fuera
+    detailsModal.addEventListener('click', function(event) {
+        if (event.target === detailsModal) {
+            document.body.removeChild(detailsModal);
+        }
+    });
+}
+
 // Inicializar el selector de perfiles
 function initProfileSelector() {
     const profileSelect = document.getElementById('profile-select');
@@ -94,18 +184,34 @@ function changeProfile() {
     const profile = profileSelect.value;
     const flotaTab = document.querySelector('.flota-tab');
     
-    // Cambiar visibilidad de pestañas según perfil
+    // Ocultar todas las pestañas primero
+    document.querySelectorAll('.tab-trigger').forEach(tab => {
+        tab.classList.remove('disabled');
+    });
+    
+    // Configurar las pestañas según el perfil
     if (profile === 'flota') {
+        // Mostrar solo pestañas relevantes para flota
         flotaTab.style.display = 'flex';
         document.getElementById('user-name').textContent = 'Empresa XYZ';
-    } else {
-        flotaTab.style.display = 'none';
         
-        if (profile === 'cliente') {
-            document.getElementById('user-name').textContent = 'Juan Pérez';
-        } else if (profile === 'concesionario') {
-            document.getElementById('user-name').textContent = 'Concesionario Bogotá';
-        }
+        // Deshabilitar pestañas no relevantes
+        document.querySelector('.tab-trigger[data-tab="concesionario"]').classList.add('disabled');
+    } else if (profile === 'cliente') {
+        // Mostrar solo pestañas relevantes para cliente
+        flotaTab.style.display = 'none';
+        document.getElementById('user-name').textContent = 'Juan Pérez';
+        
+        // Deshabilitar pestañas no relevantes
+        document.querySelector('.tab-trigger[data-tab="concesionario"]').classList.add('disabled');
+        document.querySelector('.tab-trigger[data-tab="flota"]').classList.add('disabled');
+    } else if (profile === 'concesionario') {
+        // Mostrar solo pestañas relevantes para concesionario
+        flotaTab.style.display = 'none';
+        document.getElementById('user-name').textContent = 'Concesionario Bogotá';
+        
+        // Deshabilitar pestañas no relevantes
+        document.querySelector('.tab-trigger[data-tab="flota"]').classList.add('disabled');
     }
     
     // Cambiar a pestaña relevante para el perfil
@@ -186,6 +292,19 @@ function loadVehicles() {
                 <button class="btn" style="width:100%; margin-top:10px;">Ver Detalles</button>
             </div>
         `;
+        
+        // Añadir evento para mostrar detalles al hacer clic en la imagen
+        const vehicleImg = vehicleCard.querySelector('.vehicle-img');
+        vehicleImg.addEventListener('click', function() {
+            showVehicleDetails(vehicle.model);
+        });
+        
+        // Añadir evento para mostrar detalles al hacer clic en el botón
+        const detailsBtn = vehicleCard.querySelector('.btn');
+        detailsBtn.addEventListener('click', function() {
+            showVehicleDetails(vehicle.model);
+        });
+        
         vehiclesGrid.appendChild(vehicleCard);
     });
 }
@@ -208,9 +327,16 @@ function loadInventory() {
             <p>Ubicación: ${item.location}</p>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button class="btn">Gestionar</button>
-                <button class="btn btn-secondary">Ver Detalles</button>
+                <button class="btn btn-secondary details-btn">Ver Detalles</button>
             </div>
         `;
+        
+        // Agregar evento al botón de detalles
+        const detailsBtn = inventoryCard.querySelector('.details-btn');
+        detailsBtn.addEventListener('click', function() {
+            showVehicleDetails(item.model);
+        });
+        
         inventoryGrid.appendChild(inventoryCard);
     });
 }
@@ -246,7 +372,16 @@ function loadServices() {
                 <div class="progress-bar" style="width: ${service.progress}%"></div>
             </div>
             <p style="text-align:right;">${service.progress}% completado</p>
+            <button class="btn" style="margin-top:10px">Actualizar</button>
         `;
+        
+        // Hacer que la miniatura sea clicable
+        const vehicleThumb = serviceCard.querySelector('div[style*="background-image"]');
+        vehicleThumb.style.cursor = 'pointer';
+        vehicleThumb.addEventListener('click', function() {
+            showVehicleDetails(service.model);
+        });
+        
         serviceResults.appendChild(serviceCard);
     });
 }
@@ -276,6 +411,14 @@ function loadServiceClients() {
                 <button class="btn btn-secondary">Contactar Cliente</button>
             </div>
         `;
+        
+        // Hacer que la miniatura sea clicable
+        const vehicleThumb = clientCard.querySelector('div[style*="background-image"]');
+        vehicleThumb.style.cursor = 'pointer';
+        vehicleThumb.addEventListener('click', function() {
+            showVehicleDetails(service.model);
+        });
+        
         serviceClients.appendChild(clientCard);
     });
 }
